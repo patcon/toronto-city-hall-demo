@@ -1,0 +1,38 @@
+{
+  "upcoming": {
+    "count": 3,
+    "items": [
+      {
+        "identifier": "EY10.54",
+        "url": "http://app.toronto.ca/tmmis/viewAgendaItemHistory.do?item=2015.EY10.54",
+        "committee": "City Council",
+        "categories": [
+          "social justice"
+        ],
+        "title": "Request for Reports Regarding a Potential Methadone Clinic on Lake Shore Boulevard West"
+      },
+      {
+        "identifier": "PW9.3",
+        "url": "http://app.toronto.ca/tmmis/viewAgendaItemHistory.do?item=2015.PW9.3",
+        "committee": "City Council",
+        "categories": [
+          "environment"
+        ],
+        "title": "Agreement with Enbridge for the Installation of Compressed Natural Gas Refuelling Stations at City Facilities"
+      },
+      {
+        "identifier": "PG8.1",
+        "url": "http://app.toronto.ca/tmmis/viewAgendaItemHistory.do?item=2015.PG8.1",
+        "committee": "City Council",
+        "categories": [
+          "open government"
+        ],
+        "title": "Audio Visual Recording of Committee of Adjustment Meetings"
+      }
+    ]
+  },
+  "past": {
+    "count": 0,
+    "items": []
+  }
+}
