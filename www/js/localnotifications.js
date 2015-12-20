@@ -13,3 +13,8 @@ scheduleDelayed = function () {
         at: _5_sec_from_now,
     });
 };
+
+document.addEventListener('deviceready', onDeviceReady, false);
+function onDeviceReady() {
+  document.getElementById('btn-test-notification').addEventListener('click', scheduleDelayed);
+}
