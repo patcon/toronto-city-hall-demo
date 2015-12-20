@@ -28,7 +28,7 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -43,7 +43,215 @@
                 <p class="event received">Device is Ready</p>
             </div>
         </div>
+
+        <!-- Testing -->
+        <h2 class="section">Testing</h2>
+        <div class="container">
+          <div id="schedule" onclick="scheduleDelayed()">Test notifications</div>
+        </div>
+
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+
+        <script type="text/javascript">
+            var id = 1, dialog;
+            callback = function () {
+                cordova.plugins.notification.local.getIds(function (ids) {
+                    showToast('IDs: ' + ids.join(' ,'));
+                });
+            };
+            showToast = function (text) {
+                setTimeout(function () {
+                    if (device.platform != 'windows') {
+                        window.plugins.toast.showShortBottom(text);
+                    } else {
+                        showDialog(text);
+                    }
+                }, 100);
+            };
+            showDialog = function (text) {
+                if (dialog) {
+                    dialog.content = text;
+                    return;
+                }
+                dialog = new Windows.UI.Popups.MessageDialog(text);
+                dialog.showAsync().done(function () {
+                    dialog = null;
+                });
+            };
+        </script>
+
+        <!-- schedule -->
+        <script type="text/javascript">
+            scheduleDelayed = function () {
+                var now = new Date().getTime(),
+                    _5_sec_from_now = new Date(now + 5 * 1000);
+
+                cordova.plugins.notification.local.schedule({
+                    id: 1,
+                    icon: 'res://icon',
+                    // See: http://androiddrawables.com
+                    // Most icons with 'ic' prefix work.
+                    smallIcon: null,
+                    title: '3 upcoming votes',
+                    text: 'City Council',
+                    at: _5_sec_from_now,
+                });
+            };
+        </script>
+
+        <!-- update -->
+        <script type="text/javascript">
+            update = function () {
+                cordova.plugins.notification.local.update({
+                    id: 1,
+                    text: 'Updated Message 1',
+                    json: { updated: true }
+                });
+            };
+            updateInterval = function () {
+                cordova.plugins.notification.local.update({
+                    id: 1,
+                    text: 'Updated Message 1',
+                    every: 'minute'
+                });
+            };
+        </script>
+
+        <!-- clear -->
+        <script type="text/javascript">
+            clearSingle = function () {
+                cordova.plugins.notification.local.clear(1, callback);
+            };
+            clearMultiple = function () {
+                cordova.plugins.notification.local.clear([2, 3], callback);
+            };
+            clearAll = function () {
+                cordova.plugins.notification.local.clearAll(callback);
+            };
+        </script>
+
+        <!-- cancel -->
+        <script type="text/javascript">
+            cancel = function () {
+                cordova.plugins.notification.local.cancel(1, callback);
+            };
+            cancelMultiple = function () {
+                cordova.plugins.notification.local.cancel([2, 3], callback);
+            };
+            cancelAll = function () {
+                cordova.plugins.notification.local.cancelAll(callback);
+            };
+        </script>
+
+        <!-- presence -->
+        <script type="text/javascript">
+            isPresent = function () {
+                cordova.plugins.notification.local.isPresent(id, function (present) {
+                    showToast(present ? 'Yes' : 'No');
+                });
+            };
+            isScheduled = function () {
+                cordova.plugins.notification.local.isScheduled(id, function (scheduled) {
+                    showToast(scheduled ? 'Yes' : 'No');
+                });
+            };
+            isTriggered = function () {
+                cordova.plugins.notification.local.isTriggered(id, function (triggered) {
+                    showToast(triggered ? 'Yes' : 'No');
+                });
+            };
+        </script>
+
+        <!-- IDs -->
+        <script type="text/javascript">
+            var callbackIds = function (ids) {
+                console.log(ids);
+                showToast(ids.length === 0 ? '- none -' : ids.join(' ,'));
+            };
+            getIds = function () {
+                cordova.plugins.notification.local.getIds(callbackIds);
+            };
+            getScheduledIds = function () {
+                cordova.plugins.notification.local.getScheduledIds(callbackIds);
+            };
+            getTriggeredIds = function () {
+                cordova.plugins.notification.local.getTriggeredIds(callbackIds);
+            };
+        </script>
+
+        <!-- notifications -->
+        <script type="text/javascript">
+            var callbackOpts = function (notifications) {
+                console.log(notifications);
+                showToast(notifications.length === 0 ? '- none -' : notifications.join(' ,'));
+            };
+            var callbackSingleOpts = function (notification) {
+                console.log(notification);
+                showToast(notification ? notification.toString() : '- none -');
+            };
+            get = function () {
+                cordova.plugins.notification.local.get(1, callbackSingleOpts);
+            };
+            getMultiple = function () {
+                cordova.plugins.notification.local.get([1, 2], callbackOpts);
+            };
+            getAll = function () {
+                cordova.plugins.notification.local.getAll(callbackOpts);
+            };
+            getScheduled = function () {
+                cordova.plugins.notification.local.getScheduled(callbackOpts);
+            };
+            getTriggered = function () {
+                cordova.plugins.notification.local.getTriggered(callbackOpts);
+            };
+        </script>
+
+        <!-- defaults -->
+        <script type="text/javascript">
+            setDefaultTitle = function () {
+                cordova.plugins.notification.local.setDefaults({
+                    title: 'New Default Title'
+                });
+            };
+        </script>
+
+        <!-- callbacks -->
+        <script type="text/javascript">
+            document.addEventListener('deviceready', function () {
+                cordova.plugins.notification.local.on('schedule', function (notification) {
+                    console.log('onschedule', arguments);
+                    // showToast('scheduled: ' + notification.id);
+                });
+                cordova.plugins.notification.local.on('update', function (notification) {
+                    console.log('onupdate', arguments);
+                    // showToast('updated: ' + notification.id);
+                });
+                cordova.plugins.notification.local.on('trigger', function (notification) {
+                    console.log('ontrigger', arguments);
+                    showToast('triggered: ' + notification.id);
+                });
+                cordova.plugins.notification.local.on('click', function (notification) {
+                    console.log('onclick', arguments);
+                    showToast('clicked: ' + notification.id);
+                });
+                cordova.plugins.notification.local.on('cancel', function (notification) {
+                    console.log('oncancel', arguments);
+                    // showToast('canceled: ' + notification.id);
+                });
+                cordova.plugins.notification.local.on('clear', function (notification) {
+                    console.log('onclear', arguments);
+                    showToast('cleared: ' + notification.id);
+                });
+                cordova.plugins.notification.local.on('cancelall', function () {
+                    console.log('oncancelall', arguments);
+                    // showToast('canceled all');
+                });
+                cordova.plugins.notification.local.on('clearall', function () {
+                    console.log('onclearall', arguments);
+                    // showToast('cleared all');
+                });
+            }, false);
+        </script>
     </body>
 </html>
