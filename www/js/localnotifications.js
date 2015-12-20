@@ -3,7 +3,7 @@ scheduleDelayed = function (data) {
       _5_sec_from_now = new Date(now + 5 * 1000);
 
   cordova.plugins.notification.local.schedule({
-      id: 1,
+      id: 2,
       icon: 'res://icon',
       title: data.upcoming.count + ' upcoming votes',
       text: 'City Council',
