@@ -6,7 +6,7 @@
   ],
   "license": "ISC",
   "moduleType": [
-    "node"
+    "globals"
   ],
   "homepage": "",
   "private": true,

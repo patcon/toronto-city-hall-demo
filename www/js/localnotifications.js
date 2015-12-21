@@ -15,6 +15,8 @@ document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
   navigator.splashscreen.hide();
 
+  setupCards();
+
   var path = window.location.href.replace('index.html', '');
   var request = pegasus(path + 'data.json');
   request.then(
