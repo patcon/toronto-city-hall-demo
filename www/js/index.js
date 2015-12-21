@@ -33,21 +33,8 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.hideSplash();
         app.createDemoNotification();
         app.fetchData();
-        app.receivedEvent('deviceready');
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
     },
 
     hideSplash: function() {
@@ -80,13 +67,17 @@ var app = {
     },
 
     processData: function(data) {
-      app.setupCards(data);
-
       cordova.plugins.notification.local.on("click", function (notification) {
 
-        if (notification.id == 1) {
-          app.scheduleDelayed(data);
-        };
+        switch (notification.id) {
+          case 1:
+            app.scheduleDelayed(data);
+            break;
+          case 2:
+            app.hideSplash();
+            app.setupCards(data);
+            break
+        }
       });
     },
 
@@ -109,12 +100,12 @@ var app = {
       data.upcoming.items.forEach(function(item) {
         var node = document.createElement('li');
         node.classList.add('in-deck');
-        var textnode = document.createTextNode(item.identifier);
+        var textnode = document.createTextNode(item.title);
         node.appendChild(textnode);
-        document.getElementById('stack').appendChild(node);
+        document.getElementById('cards').appendChild(node);
       });
 
-      [].forEach.call(document.querySelectorAll('#stack li'), function (targetElement) {
+      [].forEach.call(document.querySelectorAll('#cards li'), function (targetElement) {
           stack.createCard(targetElement);
           targetElement.classList.add('in-deck');
       });
