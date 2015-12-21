@@ -33,6 +33,9 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
+        app.hideSplash();
+        app.createDemoNotification();
+        app.fetchData();
         app.receivedEvent('deviceready');
     },
     // Update DOM on a Received Event
@@ -45,7 +48,80 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
+    },
+
+    hideSplash: function() {
+      navigator.splashscreen.hide();
+    },
+
+    fetchData: function() {
+      var path = window.location.href.replace('index.html', '');
+      var request = pegasus(path + 'data.json');
+      request.then(
+        function (data, xhr) {
+          app.processData(data);
+        },
+        function (data, xhr) {
+          console.error(data, xhr.status);
+        }
+      );
+    },
+
+    createDemoNotification: function() {
+      cordova.plugins.notification.local.schedule({
+          id: 1,
+          icon: 'res://icon',
+          // See: http://androiddrawables.com
+          // Most icons with 'ic' prefix work.
+          text: 'Click to start demo',
+          at: new Date(),
+          ongoing: true,
+      });
+    },
+
+    processData: function(data) {
+      cordova.plugins.notification.local.on("click", function (notification) {
+        //app.setupCards(data);
+
+        if (notification.id == 1) {
+          app.scheduleDelayed(data);
+        };
+      });
+    },
+
+    scheduleDelayed: function (data) {
+      var now = new Date().getTime(),
+          _5_sec_from_now = new Date(now + 5 * 1000);
+
+      cordova.plugins.notification.local.schedule({
+          id: 2,
+          icon: 'res://icon',
+          title: data.upcoming.count + ' upcoming votes',
+          text: 'City Council',
+          at: _5_sec_from_now,
+      });
+    },
+
+    setupCards: function (data) {
+      var stack = gajus.Swing.Stack();
+
+      data.upcoming.items.forEach(function(item) {
+        var node = document.createElement('li');
+        stack.createCard(node);
+        node.classList.add('in-deck');
+        console.log(item.identifier);
+        var textnode = document.createTextNode(item.identifier);
+        node.appendChild(textnode);
+        document.getElementById('stack').appendChild(node);
+      });
+
+      stack.on('throwout', function (e) {
+        e.target.classList.remove('in-deck');
+        console.log('Card has been throw out of the stack.');
+        console.log('Throw direction: ' + (e.throwDirection == -1 ? 'left' : 'right'));
+      });
     }
+
 };
 
 app.initialize();
