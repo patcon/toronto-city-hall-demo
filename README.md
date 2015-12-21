@@ -11,6 +11,7 @@ we will be using project-level installs to ensure consistency._
 
 ```
 npm install
+node_modules/.bin/bower install
 node_modules/.bin/cordova platform add browser
 node_modules/.bin/cordova run browser
 node_modules/.bin/cordova plugin add 'https://github.com/katzer/cordova-plugin-local-notifications#0.8.2'

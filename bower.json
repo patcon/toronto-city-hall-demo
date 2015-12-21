@@ -1,0 +1,17 @@
+{
+  "name": "toronto-city-hall-demo",
+  "description": "```",
+  "authors": [
+    "Patrick Connolly <patrick.c.connolly@gmail.com>"
+  ],
+  "license": "ISC",
+  "moduleType": [
+    "node"
+  ],
+  "homepage": "",
+  "private": true,
+  "dependencies": {
+    "pegasus": "~0.3.2",
+    "swing": "~3.0.2"
+  }
+}
