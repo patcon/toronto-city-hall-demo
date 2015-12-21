@@ -80,8 +80,9 @@ var app = {
     },
 
     processData: function(data) {
+      app.setupCards(data);
+
       cordova.plugins.notification.local.on("click", function (notification) {
-        //app.setupCards(data);
 
         if (notification.id == 1) {
           app.scheduleDelayed(data);
@@ -107,12 +108,15 @@ var app = {
 
       data.upcoming.items.forEach(function(item) {
         var node = document.createElement('li');
-        stack.createCard(node);
         node.classList.add('in-deck');
-        console.log(item.identifier);
         var textnode = document.createTextNode(item.identifier);
         node.appendChild(textnode);
         document.getElementById('stack').appendChild(node);
+      });
+
+      [].forEach.call(document.querySelectorAll('#stack li'), function (targetElement) {
+          stack.createCard(targetElement);
+          targetElement.classList.add('in-deck');
       });
 
       stack.on('throwout', function (e) {
